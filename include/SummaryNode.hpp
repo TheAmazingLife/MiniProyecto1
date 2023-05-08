@@ -2,13 +2,17 @@
 
 #include "DataNode.hpp"
 
+// Estructura que representa un nodo resumenn en el arbol.
 struct SummaryNode {
-    int MaxCapacity; // tamaño máximo b
-    int usedCapacity; // capacidad usada (extra: tiene el valor de cap[0] + cap[1], capacidad sumadas :(
+    int MaxCapacity; /**< Tamaño máximo de los arreglos. */
+    int usedCapacity; /**< Capacidad usada. */
 
-    SummaryNode *SummNodeL, *SummNodeR;
-    DataNode *DataNodeL, *DataNodeR;
+    SummaryNode *SummNodeL, *SummNodeR; /**< Punteros a los nodos resumen izquierdo y derecho. */
+    DataNode *DataNodeL, *DataNodeR; /**< Punteros a los nodos de datos izquierdo y derecho. */
     
-    SummaryNode(DataNode* data1, DataNode* data2); // Nivel Hoja 0
-    SummaryNode(SummaryNode* sum1, SummaryNode* sum2); // Nivel > 0
+    // Constructor para nivel Hoja 0.
+    SummaryNode(DataNode* data1, DataNode* data2);
+
+    // Constructor para nivel > 0.
+    SummaryNode(SummaryNode* sum1, SummaryNode* sum2);
 };

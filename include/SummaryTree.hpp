@@ -2,16 +2,16 @@
 
 #include "SummaryNode.hpp"
 
+
 #include <vector>
 
 class SummaryTree {
   private:
-    std::vector<SummaryNode*> leaves; // Vector de SummaryNode
-
+    std::vector<SummaryNode*> leaves; /**< Vector de punteros a summary nodes que representa las hojas del árbol */
+    // ! Posible solucion es pasar como parametro leaves o implementar la funcion buildTree en ListArr
   public:
-    // SummaryTree(std::vector<DataNode*>& dataNodes); // constructor
-    
-    void duplicateLeaves(); // no se como XD
-    void insert(DataNode* data); // insertar un nodo dato
-    SummaryNode* buildTree(); // crea un arbol a partir del vector de hojas
+    ~SummaryTree();
+    SummaryNode* buildTree(); // Construye un árbol de summary nodes a partir de un vector de summary nodes ordenados.
+    void duplicateLeaves(); // TODO: hacer el metodo
+    void insert(DataNode* data); // Inserta un nuevo nodo de datos en el árbol.
 };

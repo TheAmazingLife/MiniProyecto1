@@ -1,6 +1,6 @@
 #include "..\include\SummaryNode.hpp"
 
-// Nodos resumen del nivel 0
+// Constructor para nivel 0
 SummaryNode::SummaryNode(DataNode* dataNode1, DataNode* dataNode2) {
     this->DataNodeL = dataNode1;
     this->DataNodeR = dataNode2;
@@ -10,7 +10,7 @@ SummaryNode::SummaryNode(DataNode* dataNode1, DataNode* dataNode2) {
     this->MaxCapacity = dataNode1->maxCapacity + dataNode2->maxCapacity;
 }
 
-// Nodos resumen de niveles > 0
+// Constructor para nivel > 0
 SummaryNode::SummaryNode(SummaryNode* summNode1, SummaryNode* summNode2) {
     this->DataNodeL = nullptr;
     this->DataNodeR = nullptr;

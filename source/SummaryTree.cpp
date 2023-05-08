@@ -3,7 +3,16 @@
 
 #include <vector>
 
-// Arma un árbol apartir de un vector de summary nodes ordenados
+// Destructor de la clase SummaryTree.
+SummaryTree::~SummaryTree() {
+    // Liberar memoria de los nodos hoja
+    for (auto leaf : leaves) {
+        delete leaf;
+    }
+}
+
+// Construye un árbol apartir de un vector de SummaryNodes ordenados.
+// Retorna un Puntero a la raiz del arbol
 SummaryNode* SummaryTree::buildTree() {
     int n = this->leaves.size();
     
@@ -22,10 +31,10 @@ SummaryNode* SummaryTree::buildTree() {
             tree[i]->SummNodeR = tree[2*i+1];
         }
     }
-
     return tree[1]; // devolver la raíz del árbol
 }
 
+// Insertar un nodo de datos en el arbol como una hoja
 void SummaryTree::insert(DataNode* data) {
     leaves.push_back(new SummaryNode(data, nullptr));
 }

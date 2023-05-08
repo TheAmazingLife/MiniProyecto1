@@ -4,15 +4,22 @@
 #include "DataNode.hpp"
 #include "SummaryNode.hpp"
 
+#include <vector>
+
 class ListArr : public ListArrADT {
   private:
-    int dataCapacity;
+    int dataMaxCapacity;
+
     DataNode* head;
     DataNode* tail;
+    int dataNodes_count;
 
     SummaryNode* summaryRoot;
+    std::vector<SummaryNode*> summaryNodes;
 
     //* Estructuras auxiliares
+
+    void expandListArr();
 
   public:
     ListArr(int dataCap = 1);

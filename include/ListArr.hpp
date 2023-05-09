@@ -16,11 +16,10 @@ class ListArr : public ListArrADT {
     SummaryNode* summaryRoot; /**< Un puntero a la raíz de la estructura resumen */
 
     // * Funciones auxiliares
-    void expandListArr(); // Expande la lista en un factor de 2
+    void resize(); // Expande la lista en un factor de 2
     void updateSummaryNodes(SummaryNode* currentNodo); // Actualiza el valor de los nodos
     void shiftDataToRight(DataNode* refData, int index); // Desplaza a la derecha todos los valores en el árbol resumen
-    SummaryNode* buildTree(const std::vector<SummaryNode*> vectorSummaryNodes); // Construye un árbol apartir de un vector de SummaryNodes ordenados.
-    SummaryNode* newSummaryParent(SummaryNode* left, SummaryNode* right);
+    SummaryNode* buildTree(std::vector<SummaryNode*> &vectorSummaryNodes); // Construye un árbol apartir de un vector de SummaryNodes ordenados.
 
   public:
     ListArr(int dataCap = 1); // Constructor, `dataCap` La capacidad máxima para cada DataNode
@@ -33,4 +32,6 @@ class ListArr : public ListArrADT {
     void print(); // Imprime los valores en la lista
     int size(); // Devuelve el número de elementos en la lista
     bool find(int value); // Busca un valor en la lista, Verdadero si se encuentra el valor, falso en caso contrario
+
+    void printSummaries(); // Imprime los valores en los nodos del árbol resumen
 };

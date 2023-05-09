@@ -54,11 +54,13 @@ void ListArr::insert(int v, int index) {
 
     // Comprobar si se necesita expandir la capacidad de ListArr
     if (size() == summaryRoot->maxCapacity) {
-        this->expandListArr();
+        this->resize();
+        // ! EXPERIMENTAL
+        this->resize();
+        // this->resize();
+        // ! EXPERIMENTAL
     }
 
-    std::cout << "0\n";
-    
     //* Algoritmo del enunciado para encontrar datos en cierto index
     // Recorrer árbol de summaryNodes hasta llegar a un nodo hoja
     SummaryNode* currentSumm = summaryRoot;
@@ -71,8 +73,6 @@ void ListArr::insert(int v, int index) {
         }
     }
 
-    std::cout << "1\n";
-
     // Comprobar en que dataNode del summaryNode actual se insertara el valor
     DataNode* currentData;
     if (index <= currentSumm->dataLeft->usedCapacity) {
@@ -82,20 +82,25 @@ void ListArr::insert(int v, int index) {
         currentData = currentSumm->dataRight;
     }
 
-    std::cout << "2\n";
+    // std::cout << "* usedCapacity1: " << currentData->usedCapacity << "\n";
+    // std::cout << "* size1: " << size() << "\n";
 
     // Desplazar los datos de ListArr consecuentes a la posición en que se insertara el valor
-    if (currentData != dataHead) this->shiftDataToRight(currentData, index);
-
-    std::cout << "3\n";
+    if (currentData->usedCapacity != 0) shiftDataToRight(currentData, index);
 
     // Insertar el nuevo valor en el dataNode correspondiente
     currentData->array[index] = v;
-
-    std::cout << "4\n";
+    currentData->usedCapacity++;
 
     // Actualizar la cantidad de datos en árbol de summaryNodes
-    updateSummaryNodes(summaryRoot);
+    if (summaryRoot->summLeft == nullptr) {
+        summaryRoot->usedCapacity++;
+    } else {
+        updateSummaryNodes(summaryRoot);
+    }
+
+    // std::cout << "* usedCapacity2: " << currentData->usedCapacity << "\n";
+    // std::cout << "* size2: " << size() << "\n";
 }
 
 // * Subfuncion de insert (insert(v, 0)))
@@ -117,54 +122,45 @@ void ListArr::shiftDataToRight(DataNode* refData, int index) {
         currentData = currentData->previous;
     }
 
-    // Actualizar la cantidad de datos en el dataNode correspondiente
-    if (currentData->usedCapacity == currentData->maxCapacity) {
-        currentData->next->usedCapacity++;
-    } else {
-        currentData->usedCapacity++;
-    }
-
-    // En el caso que sea necesario desplazar los datos de otros dataNodes...
-    if (currentData != refData && currentData != nullptr) {
-        // Desplazar datos desde el ultimo dato de ListArr hasta dataNodo siguiente a refData (izq<--der)
-        while (true) {
-            // Su dataNode actual esta lleno, entonces se mueve ultimo valor al siguiente dataNode
-            if (currentData->usedCapacity == currentData->maxCapacity) {
-                currentData->next->array[0] = currentData->array[dataMaxCapacity-1];
-            }
-
-            // Comprobar si se llego al dataNode en el que se insertara el valor
-            if (currentData == refData) break;
-
-            for (int i = currentData->usedCapacity - 1; i > 0; i--) {
-                currentData->array[i] = currentData->array[i-1];
-            }
-
-            currentData = currentData->previous;
+    // Desplazar datos desde el ultimo dato de ListArr hasta dataNodo siguiente a refData (izq<--der)
+    while (true) {
+        // Su dataNode actual esta lleno, entonces se mueve ultimo valor al siguiente dataNode
+        if (currentData->usedCapacity == currentData->maxCapacity) {
+            currentData->next->array[0] = currentData->array[dataMaxCapacity-1];
+            currentData->next->usedCapacity++;
+            currentData->usedCapacity--;
         }
+
+        // Comprobar si se llego al dataNode en el que se insertara el valor
+        if (currentData == refData) break;
+
+        for (int i = currentData->usedCapacity; i > 0; i--) {
+            currentData->array[i] = currentData->array[i-1];
+        }
+        currentData = currentData->previous;
     }
 
     // Actualizar dataNode en el que se insertara el valor
-    for (int i = refData->usedCapacity - 1; i > index; i--) {
+    for (int i = refData->usedCapacity; i > index; i--) {
         refData->array[i] = refData->array[i-1];
     }
 }
 
 // * Función para imprimir ListArr
 void ListArr::print() {
-    cout << "ListArr: " << '\n';
+    cout << "ListArr: ";
 
-    DataNode* currentSumm = dataHead;
-    while (currentSumm != nullptr) {
+    DataNode* currentData = dataHead;
+    while (currentData != nullptr) {
         cout << "[";
-        for (int i = 0; i < currentSumm->usedCapacity; i++) {
-            cout << currentSumm->array[i];
-            if (i < currentSumm->usedCapacity - 1) {
+        for (int i = 0; i < currentData->maxCapacity; i++) {
+            cout << currentData->array[i];
+            if (i < currentData->maxCapacity-1) {
                 cout << ", ";
             }
         }
         cout << "]";
-        currentSumm = currentSumm->next;
+        currentData = currentData->next;
     }
     cout << '\n';
 }
@@ -189,7 +185,7 @@ bool ListArr::find(int v) {
 }
 
 // * Función que expande la capacidad de ListArr
-void ListArr::expandListArr() {
+void ListArr::resize() {
     std::vector<SummaryNode*> vecSummaryNodes; /**< Un vector que contiene todos los SummaryNode en la estructura */
 
     // Agregar los nuevos nodos de datos
@@ -199,7 +195,7 @@ void ListArr::expandListArr() {
         dataTail->next = newDataNode;
         dataTail = newDataNode;
 
-        // Crear summaryNodes para cada par de dataNodes (Primera linea de summaryNodes)
+        // Crear summaryNodes para cada par de dataNodes (primera linea de summaryNodes)
         if ((i + 1) % 2 == 0) {
             SummaryNode* newSummaryNode = new SummaryNode(newDataNode->previous, newDataNode);
             vecSummaryNodes.push_back(newSummaryNode);
@@ -207,69 +203,83 @@ void ListArr::expandListArr() {
     }
     dataNodes_count *= 2; // Actualizar la cantidad de DataNodes (se duplica)
 
+    // ! EXPERIMENTAL
+    for (auto i : vecSummaryNodes) std::cout << i << " " ;
+    std::cout << "\n";
+    // ! EXPERIMENTAL
+    
     summaryRoot = buildTree(vecSummaryNodes);
 
     vecSummaryNodes.clear(); // Vaciar el vector de summaryNodes
+
+    printSummaries(); // ! borrar despues
+    print();
 }
 
-SummaryNode* ListArr::buildTree(std::vector<SummaryNode*> vecSummaryNodes) {
+// ! TA MALOOOOOOOOOOOOOOOOOOOOOOOOOO
+// * Función que genera una nueva SummaryNode raiz a partir de SummaryNodes base
+SummaryNode* ListArr::buildTree(std::vector<SummaryNode*> &vecSummaryNodes) {
     std::stack<SummaryNode*> treeStack;
 
+    // En caso de que sea el primer duplicado solo se genera la nueva raiz a partir de la `summaryRoot` y el unico nuevo nodo vecino
+    if (vecSummaryNodes.size() == 1)  {
+        SummaryNode* newRoot = new SummaryNode(summaryRoot, vecSummaryNodes[0]);
+        return newRoot;
+    }
+    
     // generamos los nodos padre de los últimos nodos generados
-    for (int i = vecSummaryNodes.size() - 1; i > 0; i -= 2) { // agrega los nodos de manera inversa, de derecha a izquierda
-        SummaryNode* auxSummNode = newSummaryParent(vecSummaryNodes[i-1], vecSummaryNodes[i]);
+    for (int i = 0; i < vecSummaryNodes.size(); i += 2) { 
+        SummaryNode* auxSummNode = new SummaryNode(vecSummaryNodes[i], vecSummaryNodes[i+1]);
         treeStack.push(auxSummNode);
-    }    
+    }
+    // ! EXPERIMENTAL: cout << "Esta vacio el stack? " << ((treeStack.empty()) ? "Si" : "No") << '\n';
 
     // de la primera generación de padres generamos padres hasta que lleguemos al mismo nivel que la raíz
     while (treeStack.size() != 1) {
-        SummaryNode *auxSummL, *auxSummR;
-        auxSummL = treeStack.top();
-        treeStack.pop();
-        auxSummR = treeStack.top();
-        treeStack.pop();
-        SummaryNode* auxSummNode = newSummaryParent(auxSummL, auxSummR);
-        treeStack.push(auxSummNode);
+        std::cout << "Hola owo\n";
+        SummaryNode* auxSummL = treeStack.top(); treeStack.pop();
+        SummaryNode* auxSummR = treeStack.top(); treeStack.pop();
+        SummaryNode* newParent = new SummaryNode(auxSummL, auxSummR);
+        treeStack.push(newParent);
     }
-    treeStack.push(summaryRoot); // agrega la raíz para asi no calcular nuevamente los nodos summary
+    // treeStack.push(summaryRoot); // agrega la raíz para asi no calcular nuevamente los nodos summary
 
     // generamos el nuevo ultima raíz
-    SummaryNode* newRoot = treeStack.top();
+    SummaryNode* newRoot = new SummaryNode(summaryRoot, treeStack.top());
     treeStack.pop();
+    
     return newRoot;
 }
 
-SummaryNode* ListArr::newSummaryParent(SummaryNode* left, SummaryNode* right) {
-    return new SummaryNode(left, right);
-}
-
-// TODO: actualizar summaryNodes
-// Post Order recorrido
-
-/* void ListArr::postOrder(Nodo *nodo, vector<Nodo*> &resultado) {
-    if (nodo == NULL)
-    {
-      return;
-    }
-    for (auto hijo : nodo->hijos)
-    {
-      postOrder(hijo, resultado);
-    }
-    resultado.push_back(nodo); // va al ultimo hijo y lo agrega
-} */
-
-void ListArr::updateSummaryNodes(SummaryNode* currentNodo) {
-    if (currentNodo->summLeft == nullptr || currentNodo->summRight == nullptr) {
+void ListArr::updateSummaryNodes(SummaryNode* currentSumm) {
+    if (currentSumm->summLeft == nullptr || currentSumm->summRight == nullptr) {
+        currentSumm->usedCapacity = currentSumm->summLeft->usedCapacity + currentSumm->summRight->usedCapacity;
         return;
     }
     
-    updateSummaryNodes(currentNodo->summLeft);
-    updateSummaryNodes(currentNodo->summRight);
+    updateSummaryNodes(currentSumm->summLeft);
+    updateSummaryNodes(currentSumm->summRight);
+
+    currentSumm->usedCapacity = currentSumm->summLeft->usedCapacity + currentSumm->summRight->usedCapacity;
+}
+
+void ListArr::printSummaries() {
+    typedef std::function<void(SummaryNode*, std::vector<SummaryNode*>&)> Function;
+    Function preOrder = [&](SummaryNode* currSumm, std::vector<SummaryNode*>& vecSummNodes) {
+        if (currSumm == nullptr) return;
+
+        vecSummNodes.push_back(currSumm); // agrega el padre luego los hijos        
+
+        preOrder(currSumm->summLeft, vecSummNodes);
+        preOrder(currSumm->summRight, vecSummNodes);
+    };
     
-    std::vector<SummaryNode*> hijosCurrent = {currentNodo->summLeft, currentNodo->summRight};
-    for (auto hijo : hijosCurrent) {
-        updateSummaryNodes(hijo);
+    std::vector<SummaryNode *> vecSumms;
+    preOrder(summaryRoot, vecSumms);
+
+    std::cout << "Summaries en preorder: ";
+    for (auto summ : vecSumms)  {
+        cout << "[" << summ->usedCapacity << ", " << summ->maxCapacity << "]";
     }
-    
-    currentNodo->usedCapacity = currentNodo->summLeft->usedCapacity + currentNodo->summRight->usedCapacity;
+    std::cout << "\n";
 }

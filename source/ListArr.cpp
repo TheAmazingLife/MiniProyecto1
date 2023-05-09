@@ -91,44 +91,14 @@ void ListArr::insert(int v, int index) {
     }
 }
 
-// * Subfuncion de insert (insert(v, 0)))
+// * Sub-función de insert (insert(v, 0)))
 void ListArr::insert_left(int v) {
     insert(v, 0);
 }
 
-// * Subfuncion de insert (insert(v, size()))
+// * Sub-función de insert (insert(v, size()))
 void ListArr::insert_right(int v) {
     insert(v, size());
-}
-
-// * Función para desplazar los datos de ListArr consecuentes a la posición en que se insertara el valor
-void ListArr::shiftDataToRight(DataNode* refData, int index) {
-    // Recorrer dataNodes desde tail hasta encontrar dataNode no vació
-    DataNode* currentData = dataTail;
-    while (currentData->usedCapacity == 0) {
-        currentData = currentData->previous;
-    }
-
-    // Desplazar datos desde el ultimo dato de ListArr hasta dataNodo siguiente a refData (izq<--der)
-    while (true) {
-        // Su dataNode actual esta lleno, entonces se mueve ultimo valor al siguiente dataNode
-        if (currentData->usedCapacity == currentData->maxCapacity) {
-            currentData->next->array[0] = currentData->array[dataMaxCapacity-1];
-            currentData->next->usedCapacity++;
-            currentData->usedCapacity--;
-        }
-        // Comprobar si se llego al dataNode en el que se insertara el valor
-        if (currentData == refData) break;
-        // Desplazar datos de dataNode actual
-        for (int i = currentData->usedCapacity; i > 0; i--) {
-            currentData->array[i] = currentData->array[i-1];
-        }
-        currentData = currentData->previous;
-    }
-    // Actualizar dataNode en el que se insertara el valor
-    for (int i = refData->usedCapacity; i > index; i--) {
-        refData->array[i] = refData->array[i-1];
-    }
 }
 
 // * Función para imprimir ListArr
@@ -137,15 +107,15 @@ void ListArr::print() {
     DataNode* currentData = dataHead;
     while (currentData != nullptr) {
         cout << "[";
-        for (int i = 0; i < currentData->maxCapacity; i++) {
+        for (int i = 0; i < dataMaxCapacity; i++) {
             cout << currentData->array[i];
-            if (i < currentData->maxCapacity-1) {
-                cout << ", ";
-            }
+            if (i < dataMaxCapacity-1) cout << ", ";
         }
         cout << "]";
         currentData = currentData->next;
     }
+    cout << '\n';
+    printSummariesNodes();
     cout << '\n';
 }
 
@@ -185,6 +155,36 @@ void ListArr::resize() {
 
     summaryRoot = buildSummaryTree(vecSummaryNodes);
     vecSummaryNodes.clear(); // Vaciar el vector de summaryNodes
+}
+
+// * Función para desplazar los datos de ListArr consecuentes a la posición en que se insertara el valor
+void ListArr::shiftDataToRight(DataNode* refData, int index) {
+    // Recorrer dataNodes desde tail hasta encontrar dataNode no vació
+    DataNode* currentData = dataTail;
+    while (currentData->usedCapacity == 0) {
+        currentData = currentData->previous;
+    }
+
+    // Desplazar datos desde el ultimo dato de ListArr hasta dataNodo siguiente a refData (izq<--der)
+    while (true) {
+        // Su dataNode actual esta lleno, entonces se mueve ultimo valor al siguiente dataNode
+        if (currentData->usedCapacity == currentData->maxCapacity) {
+            currentData->next->array[0] = currentData->array[dataMaxCapacity-1];
+            currentData->next->usedCapacity++;
+            currentData->usedCapacity--;
+        }
+        // Comprobar si se llego al dataNode en el que se insertara el valor
+        if (currentData == refData) break;
+        // Desplazar datos de dataNode actual
+        for (int i = currentData->usedCapacity; i > 0; i--) {
+            currentData->array[i] = currentData->array[i-1];
+        }
+        currentData = currentData->previous;
+    }
+    // Actualizar dataNode en el que se insertara el valor
+    for (int i = refData->usedCapacity; i > index; i--) {
+        refData->array[i] = refData->array[i-1];
+    }
 }
 
 // * Función que genera una nueva SummaryNode raíz a partir de SummaryNodes base
@@ -227,8 +227,7 @@ void ListArr::updateSummaryNodes(SummaryNode* currentSumm) {
     currentSumm->usedCapacity = currentSumm->summL->usedCapacity + currentSumm->summR->usedCapacity;
 }
 
-// ! EXPERIMENTAL
-void ListArr::printSummaries() {
+void ListArr::printSummariesNodes() {
     typedef std::function<void(SummaryNode*, std::vector<SummaryNode*>&)> Function;
     Function preOrder = [&](SummaryNode* currSumm, std::vector<SummaryNode*>& vecSummNodes) {
         if (currSumm == nullptr) return;
@@ -240,7 +239,7 @@ void ListArr::printSummaries() {
     std::vector<SummaryNode *> vecSumms;
     preOrder(summaryRoot, vecSumms);
 
-    cout << "Summaries tree: ";
+    cout << "Summaries: ";
     for (auto summ : vecSumms)  {
         cout << "[" << summ->usedCapacity << ", " << summ->maxCapacity << "]";
     }

@@ -4,19 +4,17 @@
 
 using std::cout;
 
-// Para compilar el programa: g++ -o programa main.cpp source/*.cpp -I include
-/** //* Ideas
+//* Para compilar y ejecutar el programa: "g++ main.cpp source/*.cpp -o a && ./a"
+/* //* Ideas
  * - Cada vez que aumentamos la capacidad de ListArr (agregar DataNodes), 
  *   doblaremos la cantidad actual de DataNodes.
- * 
  * - Usar una lista doble ligada para los DataNodes, para asi poder desplazar 
  *   los datos de los arreglos de manera mas eficiente.
- * 
  * - Iniciar la cantidad de nodos
  */
 
 int main() {
-    int maxCapacity = 3;
+    int maxCapacity = 2;
 
     cout << "Creando lista con capacidad maxima de " << maxCapacity << " elementos por nodo de datos..." << '\n';
     ListArr myList(maxCapacity);
@@ -25,10 +23,8 @@ int main() {
 
     for (int i = 0; i < (maxCapacity*16)+1; i++) {
         // myList.insert(i+1, i);
-        myList.insert_left(i+1);
-
-        // if (i < 10) myList.insert(i+1, 0);
-        // else myList.insert(i + 1, 10);
+        // myList.insert_left(i+1);
+        myList.insert_right(i+1);
 
         myList.print();
     }

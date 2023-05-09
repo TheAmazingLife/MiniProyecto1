@@ -20,7 +20,7 @@ class ListArr : public ListArrADT {
     void updateSummaryNodes(SummaryNode* currentNodo); // Actualiza el valor de los nodos
     void shiftDataToRight(DataNode* refData, int index); // Desplaza a la derecha todos los valores en el árbol resumen
     SummaryNode* buildSummaryTree(std::vector<SummaryNode*> &vectorSummaryNodes); // Construye un árbol a partir de un vector de SummaryNodes ordenados.
-    void printSummaries(); // Imprime los valores en los nodos del árbol resumen
+    void printSummariesNodes(); // Imprime los valores en los nodos del árbol resumen
 
   public:
     ListArr(int dataCap = 1); // Constructor, `dataCap` La capacidad máxima para cada DataNode

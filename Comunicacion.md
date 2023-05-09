@@ -1,8 +1,8 @@
-# Comunicacion
+# Comunicación
 
 ## Chat Joaquin
 
-Armar un arbol con respecto a un vector leafs
+Armar un árbol con respecto a un vector leafs
 Encargarse de los nodos summary
 
 ## Chat Adodo
@@ -14,4 +14,4 @@ Y expansion de ListArr
 
 Aca anotamos cosas por hacer
 
-Crea un main que agrege numeros y nodos
+Crea un main que agregue números y nodos

@@ -2,7 +2,7 @@
 
 #include "DataNode.hpp"
 
-// Estructura que representa un nodo resumenn en el arbol.
+// Estructura que representa un nodo resumen en el árbol.
 struct SummaryNode {
     int maxCapacity; /**< Tamaño máximo de los arreglos. */
     int usedCapacity; /**< Capacidad usada. */

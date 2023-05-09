@@ -16,17 +16,17 @@ ListArr::ListArr(int dataCap) : dataMaxCapacity(dataCap) {
     dataTail->previous = dataHead;
     dataNodes_count = 2;
 
-    summaryRoot = new SummaryNode(dataHead, dataTail); // * no necesita armar un arbol ya que es el primer summary summNode
+    summaryRoot = new SummaryNode(dataHead, dataTail); // * no necesita armar un árbol ya que es el primer summary sumaNode
 }
 
 // * Destructor de ListArr
 ListArr::~ListArr() {
-    typedef std::function<void(SummaryNode*)> Fuction; /**< Apodo de variable funcion recursiva con parametro SummaryNode* */
-    Fuction deleteSummaryNode = [&](SummaryNode* summNode) { /**< Funcion lambda recursiva para eliminar todos los nodos summary */
-        if (summNode == nullptr) return;
-        deleteSummaryNode(summNode->summLeft);
-        deleteSummaryNode(summNode->summRight);
-        delete summNode;
+    typedef std::function<void(SummaryNode*)> Fuction; /**< Apodo de variable función recursiva con parámetro SummaryNode* */
+    Fuction deleteSummaryNode = [&](SummaryNode* currSumm) { /**< Función lambda recursiva para eliminar todos los nodos summary */
+        if (currSumm == nullptr) return;
+        deleteSummaryNode(currSumm->summLeft);
+        deleteSummaryNode(currSumm->summRight);
+        delete currSumm;
     };
     
     // Eliminar SummaryNodes
@@ -40,11 +40,11 @@ ListArr::~ListArr() {
     }
 }
 
-// * Funcion genereal para insertar en ListArr
+// * Función general para insertar en ListArr
 void ListArr::insert(int v, int index) {
     // Comprobar si el indice es valido
     if (index < 0 || index > size()) {
-        cout << "Index out of bounds" << std::endl;
+        cout << "Error: Index out of bounds" << '\n';
         return;
     }
 
@@ -54,7 +54,7 @@ void ListArr::insert(int v, int index) {
     }
     
     //* Algoritmo del enunciado para encontrar datos en cierto index
-    // Recorrer arbol de summaryNodes hasta llegar a un nodo hoja
+    // Recorrer árbol de summaryNodes hasta llegar a un nodo hoja
     SummaryNode* currentSumm = summaryRoot;
     while (currentSumm != nullptr) {
         if (index < currentSumm->summLeft->usedCapacity) {
@@ -74,13 +74,13 @@ void ListArr::insert(int v, int index) {
         currentData = currentSumm->dataRight;
     }
 
-    // Desplazar los datos de ListArr consecuentes a la posicion en que se insertara el valor
+    // Desplazar los datos de ListArr consecuentes a la posición en que se insertara el valor
     this->shiftDataToRight(currentData, index);
 
     // Insertar el nuevo valor en el dataNode correspondiente
     currentData->array[index] = v;
 
-    // Actualizar la cantidad de datos en arbol de summaryNodes
+    // Actualizar la cantidad de datos en árbol de summaryNodes
     updateSummaryNodes(summaryRoot);
 }
 
@@ -94,11 +94,11 @@ void ListArr::insert_right(int v) {
     insert(v, size());
 }
 
-// * Funcion para desplazar los datos de ListArr consecuentes a la posicion en que se insertara el valor
+// * Función para desplazar los datos de ListArr consecuentes a la posición en que se insertara el valor
 void ListArr::shiftDataToRight(DataNode* refData, int index) {
     DataNode* currentData = dataTail;
 
-    // Recorrer dataNodes desde tail hasta encontrar dataNode no vacio
+    // Recorrer dataNodes desde tail hasta encontrar dataNode no vació
     while (currentData->usedCapacity == 0) {
         currentData = currentData->previous;
     }
@@ -136,9 +136,9 @@ void ListArr::shiftDataToRight(DataNode* refData, int index) {
     }
 }
 
-// * Funcion para imprimir ListArr
+// * Función para imprimir ListArr
 void ListArr::print() {
-    cout << "ListArr: " << std::endl;
+    cout << "ListArr: " << '\n';
 
     DataNode* currentSumm = dataHead;
     while (currentSumm != nullptr) {
@@ -152,15 +152,15 @@ void ListArr::print() {
         cout << "]";
         currentSumm = currentSumm->next;
     }
-    cout << std::endl;
+    cout << '\n';
 }
 
-// * Funcion que devuelve la cantidad de datos en ListArr
+// * Función que devuelve la cantidad de datos en ListArr
 int ListArr::size() {
     return summaryRoot->usedCapacity;
 }
 
-// * Funcion que busca un valor en ListArr
+// * Función que busca un valor en ListArr
 bool ListArr::find(int v) {
     DataNode* currentData = dataHead;
     while (currentData != nullptr) {
@@ -174,7 +174,7 @@ bool ListArr::find(int v) {
     return false;
 }
 
-// * Funcion que expande la capacidad de ListArr
+// * Función que expande la capacidad de ListArr
 void ListArr::expandListArr() {
     std::vector<SummaryNode*> vecSummaryNodes; /**< Un vector que contiene todos los SummaryNode en la estructura */
 
@@ -201,13 +201,13 @@ void ListArr::expandListArr() {
 SummaryNode* ListArr::buildTree(std::vector<SummaryNode*> vecSummaryNodes) {
     std::stack<SummaryNode*> treeStack;
 
-    // generamos los nodos padre de los ultimos nodos generados
+    // generamos los nodos padre de los últimos nodos generados
     for (int i = vecSummaryNodes.size() - 1; i > 0; i -= 2) { // agrega los nodos de manera inversa, de derecha a izquierda
         SummaryNode* auxSummNode = newSummaryParent(vecSummaryNodes[i-1], vecSummaryNodes[i]);
         treeStack.push(auxSummNode);
     }    
 
-    // de la primera generacion de padres generamos padres hasta que lleguemos al mismo nivel que la raiz
+    // de la primera generación de padres generamos padres hasta que lleguemos al mismo nivel que la raíz
     while (treeStack.size() != 1) {
         SummaryNode *auxSummL, *auxSummR;
         auxSummL = treeStack.top();
@@ -217,9 +217,9 @@ SummaryNode* ListArr::buildTree(std::vector<SummaryNode*> vecSummaryNodes) {
         SummaryNode* auxSummNode = newSummaryParent(auxSummL, auxSummR);
         treeStack.push(auxSummNode);
     }
-    treeStack.push(summaryRoot); // agrega la raiz para asi no calcular nuevamente los nodos summary
+    treeStack.push(summaryRoot); // agrega la raíz para asi no calcular nuevamente los nodos summary
 
-    // generamos el nuevo ultima raiz
+    // generamos el nuevo ultima raíz
     SummaryNode* newRoot = treeStack.top();
     treeStack.pop();
     return newRoot;

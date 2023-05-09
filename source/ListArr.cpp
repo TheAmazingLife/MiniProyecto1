@@ -6,6 +6,8 @@
 #include <vector>
 #include <functional>
 
+#include <iostream>
+
 using std::cout;
 
 // * Constructor de ListArr
@@ -42,9 +44,11 @@ ListArr::~ListArr() {
 
 // * Función general para insertar en ListArr
 void ListArr::insert(int v, int index) {
+    std::cout << "Inserting " << v << " at index " << index << ".\n";
+
     // Comprobar si el indice es valido
     if (index < 0 || index > size()) {
-        cout << "Error: Index out of bounds" << '\n';
+        cout << "Error: Index out of bounds" << ".\n";
         return;
     }
 
@@ -52,11 +56,13 @@ void ListArr::insert(int v, int index) {
     if (size() == summaryRoot->maxCapacity) {
         this->expandListArr();
     }
+
+    std::cout << "0\n";
     
     //* Algoritmo del enunciado para encontrar datos en cierto index
     // Recorrer árbol de summaryNodes hasta llegar a un nodo hoja
     SummaryNode* currentSumm = summaryRoot;
-    while (currentSumm != nullptr) {
+    while (currentSumm->summLeft != nullptr) {
         if (index < currentSumm->summLeft->usedCapacity) {
             currentSumm = currentSumm->summLeft;
         } else {
@@ -65,20 +71,28 @@ void ListArr::insert(int v, int index) {
         }
     }
 
+    std::cout << "1\n";
+
     // Comprobar en que dataNode del summaryNode actual se insertara el valor
     DataNode* currentData;
-    if (index < currentSumm->dataLeft->usedCapacity) {
+    if (index <= currentSumm->dataLeft->usedCapacity) {
         currentData = currentSumm->dataLeft;
     } else {
         index -= currentSumm->dataLeft->usedCapacity;
         currentData = currentSumm->dataRight;
     }
 
+    std::cout << "2\n";
+
     // Desplazar los datos de ListArr consecuentes a la posición en que se insertara el valor
-    this->shiftDataToRight(currentData, index);
+    if (currentData != dataHead) this->shiftDataToRight(currentData, index);
+
+    std::cout << "3\n";
 
     // Insertar el nuevo valor en el dataNode correspondiente
     currentData->array[index] = v;
+
+    std::cout << "4\n";
 
     // Actualizar la cantidad de datos en árbol de summaryNodes
     updateSummaryNodes(summaryRoot);
@@ -111,7 +125,7 @@ void ListArr::shiftDataToRight(DataNode* refData, int index) {
     }
 
     // En el caso que sea necesario desplazar los datos de otros dataNodes...
-    if (currentData != refData) {
+    if (currentData != refData && currentData != nullptr) {
         // Desplazar datos desde el ultimo dato de ListArr hasta dataNodo siguiente a refData (izq<--der)
         while (true) {
             // Su dataNode actual esta lleno, entonces se mueve ultimo valor al siguiente dataNode

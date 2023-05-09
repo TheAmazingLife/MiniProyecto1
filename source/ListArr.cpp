@@ -2,8 +2,9 @@
 
 #include <iostream>
 
-#include <stack>
+#include <stack> // borrar si es que se usa deque
 #include <vector>
+#include <deque>
 #include <functional>
 
 #include <iostream>
@@ -56,8 +57,11 @@ void ListArr::insert(int v, int index) {
     if (size() == summaryRoot->maxCapacity) {
         this->resize();
         // ! EXPERIMENTAL
+        /* this->resize();
         this->resize();
-        // this->resize();
+        this->resize(); // de aca en adelante se empieza a usar el while de padre de padres
+        this->resize();
+        this->resize(); */
         // ! EXPERIMENTAL
     }
 
@@ -203,7 +207,7 @@ void ListArr::resize() {
     }
     dataNodes_count *= 2; // Actualizar la cantidad de DataNodes (se duplica)
 
-    // ! EXPERIMENTAL
+    // ! EXPERIMENTAL // imprime el vector de nodos summary que le vamos a pasar a build
     for (auto i : vecSummaryNodes) std::cout << i << " " ;
     std::cout << "\n";
     // ! EXPERIMENTAL
@@ -212,14 +216,17 @@ void ListArr::resize() {
 
     vecSummaryNodes.clear(); // Vaciar el vector de summaryNodes
 
-    printSummaries(); // ! borrar despues
+    // ! EXPERIMENTAL
+    printSummaries(); 
     print();
+    // ! EXPERIMENTAL
 }
 
-// ! TA MALOOOOOOOOOOOOOOOOOOOOOOOOOO
+// ! TA MALOOOOOOOOOOOOOOOOOOOOOOOOOO // comentario de joaquin: creo que ya no :3
 // * Función que genera una nueva SummaryNode raiz a partir de SummaryNodes base
 SummaryNode* ListArr::buildTree(std::vector<SummaryNode*> &vecSummaryNodes) {
-    std::stack<SummaryNode*> treeStack;
+    // std::stack<SummaryNode*> treeStack;
+    std::deque<SummaryNode*> treeDeque;
 
     // En caso de que sea el primer duplicado solo se genera la nueva raiz a partir de la `summaryRoot` y el unico nuevo nodo vecino
     if (vecSummaryNodes.size() == 1)  {
@@ -228,25 +235,45 @@ SummaryNode* ListArr::buildTree(std::vector<SummaryNode*> &vecSummaryNodes) {
     }
     
     // generamos los nodos padre de los últimos nodos generados
-    for (int i = 0; i < vecSummaryNodes.size(); i += 2) { 
+    for (int i = 0; i < vecSummaryNodes.size() - 1; i += 2) { 
         SummaryNode* auxSummNode = new SummaryNode(vecSummaryNodes[i], vecSummaryNodes[i+1]);
-        treeStack.push(auxSummNode);
+        treeDeque.push_back(auxSummNode);
+        // treeStack.push(auxSummNode); // Ingrear por posterior
     }
-    // ! EXPERIMENTAL: cout << "Esta vacio el stack? " << ((treeStack.empty()) ? "Si" : "No") << '\n';
+
+        // ! EXPERIMENTAL
+        std::cout << "treeDeque:" << " ";
+        for (int i = 0; i < treeDeque.size(); i++) {
+        std::cout << treeDeque.at(i) << " ";
+        }
+        cout << "\n";
+        // ! EXPERIMENTAL
 
     // de la primera generación de padres generamos padres hasta que lleguemos al mismo nivel que la raíz
-    while (treeStack.size() != 1) {
+    // while (treeStack.size() != 1) {
+    while (treeDeque.size() != 1) {
+        // SummaryNode* auxSummL = treeStack.top(); treeStack.pop(); // sacar por frontal y borrar
+        SummaryNode* auxSummL = treeDeque.front(); treeDeque.pop_front(); // sacar por frontal y borrar
+        // SummaryNode* auxSummR = treeStack.top(); treeStack.pop(); 
+        SummaryNode* auxSummR = treeDeque.front(); treeDeque.pop_front(); // sacar por frontal y borrar
+        SummaryNode* newParent = new SummaryNode(auxSummL, auxSummR); 
+        // treeStack.push(newParent); // Ingresar por posterior
+        treeDeque.push_back(newParent);
+        
+        // ! EXPERIMENTAL
         std::cout << "Hola owo\n";
-        SummaryNode* auxSummL = treeStack.top(); treeStack.pop();
-        SummaryNode* auxSummR = treeStack.top(); treeStack.pop();
-        SummaryNode* newParent = new SummaryNode(auxSummL, auxSummR);
-        treeStack.push(newParent);
+        for (int i = 0; i < treeDeque.size(); i++) {
+        std::cout << treeDeque.at(i) << " ";
+        }
+        // ! EXPERIMENTAL
     }
     // treeStack.push(summaryRoot); // agrega la raíz para asi no calcular nuevamente los nodos summary
 
     // generamos el nuevo ultima raíz
-    SummaryNode* newRoot = new SummaryNode(summaryRoot, treeStack.top());
-    treeStack.pop();
+    // SummaryNode* newRoot = new SummaryNode(summaryRoot, treeStack.top());
+    SummaryNode* newRoot = new SummaryNode(summaryRoot, treeDeque.front());
+    // treeStack.pop();
+    treeDeque.pop_front();
     
     return newRoot;
 }
@@ -263,6 +290,7 @@ void ListArr::updateSummaryNodes(SummaryNode* currentSumm) {
     currentSumm->usedCapacity = currentSumm->summLeft->usedCapacity + currentSumm->summRight->usedCapacity;
 }
 
+// ! EXPERIMENTAL
 void ListArr::printSummaries() {
     typedef std::function<void(SummaryNode*, std::vector<SummaryNode*>&)> Function;
     Function preOrder = [&](SummaryNode* currSumm, std::vector<SummaryNode*>& vecSummNodes) {
@@ -283,3 +311,4 @@ void ListArr::printSummaries() {
     }
     std::cout << "\n";
 }
+// ! EXPERIMENTAL

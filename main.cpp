@@ -2,6 +2,7 @@
 
 #include "include\ListArr.hpp" // ! Incluir bien los datos
 
+// Para compilar el programa: g++ -o programa main.cpp source/*.cpp -I include
 /** //* Ideas
  * - Cada vez que aumentamos la capacidad de ListArr (agregar DataNodes), 
  *   doblaremos la cantidad actual de DataNodes.

@@ -228,7 +228,7 @@ int main() {
     insert_right_comparison(initialElements);
 
     // * Comparación de find()
-    // find_comparison(initialElements);
+    find_comparison(initialElements);
 
     return 0;
 }

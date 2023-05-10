@@ -236,14 +236,6 @@ SummaryNode* ListArr::buildSummaryTree(std::vector<SummaryNode*>& vecSummaryNode
 }
 
 void ListArr::updateSummaryNodes() {
-    // if (currentSumm->summL == nullptr || currentSumm->summR == nullptr) {
-    //     currentSumm->usedCapacity = currentSumm->dataL->usedCapacity + currentSumm->dataR->usedCapacity;
-    //     return;
-    // }
-    // updateSummaryNodes(currentSumm->summL);    
-    // updateSummaryNodes(currentSumm->summR);
-    // currentSumm->usedCapacity = currentSumm->summL->usedCapacity + currentSumm->summR->usedCapacity;
-
     // * Utilizamos el algoritmo del enunciado para actualizar la cantidad de datos en árbol de summaryNodes
     int index = summaryRoot->usedCapacity;
     SummaryNode* currentSumm = summaryRoot;

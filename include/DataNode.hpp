@@ -7,13 +7,6 @@ struct DataNode {
     DataNode *previous, *next; // `next` El nodo siguiente en la lista enlazada. `prev` El nodo anterior en la lista enlazada.
     int* array; // Un puntero al arreglo de enteros, inicializado con tamaño `maxCapacity`.
 
-    /**
-     * @brief Constructor que inicializa un nuevo nodo de datos.
-     * 
-     * @param capacity El tamaño máximo del arreglo `array`.
-     * @param prev El nodo anterior en la lista enlazada.
-     * @param next El nodo siguiente en la lista enlazada.
-     */
     DataNode(int capacity, DataNode* prev = nullptr, DataNode* next = nullptr);
     ~DataNode();
 };

@@ -1,10 +1,11 @@
-#include <iostream>
-
 #include "include\ListArr.hpp"
+
+#include <iostream>
 
 using std::cout;
 
-//* Para compilar y ejecutar el programa: "g++ main.cpp source/*.cpp -o a && ./a"
+//? Para compilar y ejecutar el programa: "g++ main.cpp source/*.cpp -o main && ./main"
+
 /* //* Ideas
  * - Cada vez que aumentamos la capacidad de ListArr (agregar DataNodes), 
  *   doblaremos la cantidad actual de DataNodes.
@@ -23,8 +24,9 @@ int main() {
 
     for (int i = 0; i < (maxCapacity*16)+1; i++) {
         // myList.insert(i+1, i);
-        // myList.insert_left(i+1);
-        myList.insert_right(i+1);
+
+        myList.insert_left(i+1);
+        // myList.insert_right(i+1);
 
         myList.print();
     }

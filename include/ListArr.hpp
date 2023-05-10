@@ -17,9 +17,9 @@ class ListArr : public ListArrADT {
 
     // * Funciones auxiliares
     void resize(); // Expande la lista en un factor de 2
-    void updateSummaryNodes(SummaryNode* currentNodo); // Actualiza el valor de los nodos
     void shiftDataToRight(DataNode* refData, int index); // Desplaza a la derecha todos los valores en el árbol resumen
     SummaryNode* buildSummaryTree(std::vector<SummaryNode*> &vectorSummaryNodes); // Construye un árbol a partir de un vector de SummaryNodes ordenados.
+    void updateSummaryNodes(); // Actualiza el valor de los nodos
     void printSummariesNodes(); // Imprime los valores en los nodos del árbol resumen
 
   public:

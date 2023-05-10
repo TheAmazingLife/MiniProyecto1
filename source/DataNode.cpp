@@ -4,9 +4,9 @@
 DataNode::DataNode(int cap, DataNode* prev, DataNode* next)
                 : maxCapacity(cap), previous(prev), next(next) {
     this->array = new int[maxCapacity];
-    for (int i = 0; i < maxCapacity; i++) {
-        array[i] = 0;
-    }
+    // for (int i = 0; i < maxCapacity; i++) {
+    //     array[i] = 0;
+    // }
     
     this->usedCapacity = 0;
 }

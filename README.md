@@ -11,8 +11,8 @@
 
 * Para compilar el programa se debe ejecutar el siguiente comando en la carpeta raíz del proyecto:
 
-  ``` g++ -o main main.cpp source/*.cpp ```
+  ``` g++ -o programa main.cpp source/*.cpp -I include ```
 
 * Ejecutar el programa:
 
-    ``` ./main ```
+    ``` ./programa ```

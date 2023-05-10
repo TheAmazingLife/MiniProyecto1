@@ -65,7 +65,7 @@ void ListArr::insert(int v, int index) {
     }
     // Comprobar en que dataNode del summaryNode actual se insertara el valor
     DataNode* currentData;
-    if (index <= currentSumm->dataL->usedCapacity && index != dataMaxCapacity) {
+    if (index < dataMaxCapacity) {
         currentData = currentSumm->dataL;
     } else {
         index -= currentSumm->dataL->usedCapacity;
@@ -74,7 +74,8 @@ void ListArr::insert(int v, int index) {
     //* Fin del algoritmo del enunciado
 
     // Desplazar los datos de ListArr consecuentes a la posición en que se insertara el valor
-    if (index < currentData->usedCapacity && currentData->usedCapacity != 0) {
+    // if (index < currentData->usedCapacity && currentData->usedCapacity != 0) {
+    if (index < currentData->usedCapacity) {
         // std::cout << "Desplazando datos...\n"; //!
         shiftDataToRight(currentData, index);
     }
@@ -142,7 +143,7 @@ bool ListArr::find(int v) {
 
 // * Función que expande la capacidad de ListArr
 void ListArr::resize() {
-    std::vector<SummaryNode*> vecSummaryNodes; /**< Un vector que contiene todos los SummaryNode en la estructura */
+    std::vector<SummaryNode*> vecSummaryNodes; /**< Un vector que contiene todos los SummaryNode nuevos */
 
     // Agregar los nuevos nodos de datos
     for (int i = 0; i < dataNodes_count; i++) {
@@ -158,18 +159,18 @@ void ListArr::resize() {
     dataNodes_count *= 2; // Actualizar la cantidad de DataNodes (se duplica)
 
     summaryRoot = buildSummaryTree(vecSummaryNodes);
-    vecSummaryNodes.clear(); // Vaciar el vector de summaryNodes
+    // vecSummaryNodes.clear(); // Vaciar el vector de summaryNodes
 }
 
 // * Función para desplazar los datos de ListArr consecuentes a la posición en que se insertara el valor
 void ListArr::shiftDataToRight(DataNode* refData, int index) {
     // Recorrer dataNodes desde tail hasta encontrar dataNode no vació
     DataNode* currentData;
-    if (refData->usedCapacity != dataMaxCapacity) {
+    if (refData->usedCapacity < dataMaxCapacity) {
         currentData = refData;
     } else {
         // * Utilizamos el algoritmo del enunciado para recorrer árbol de summaryNodes y encontrar el ultimo dataNode no vació
-        int index = summaryRoot->usedCapacity;
+        int index = size();
         SummaryNode* currentSumm = summaryRoot;
         while (currentSumm->summL != nullptr) {
             SummaryNode* left = currentSumm->summL;
@@ -180,25 +181,28 @@ void ListArr::shiftDataToRight(DataNode* refData, int index) {
                 currentSumm = currentSumm->summR;
             }
         }
-        currentData = (index <= currentSumm->dataL->usedCapacity && index != dataMaxCapacity) ? currentSumm->dataL : currentSumm->dataR;
+        // currentData = (index <= currentSumm->dataL->usedCapacity && index != dataMaxCapacity) ? currentSumm->dataL : currentSumm->dataR;
+        currentData = (index < dataMaxCapacity) ? currentSumm->dataL : currentSumm->dataR;
     }
 
     // Desplazar datos desde el ultimo dato de ListArr hasta dataNodo siguiente a refData (izq<--der)
     while (true) {
         // Su dataNode actual esta lleno, entonces se mueve ultimo valor al siguiente dataNode
-        if (currentData->usedCapacity == currentData->maxCapacity) {
+        if (currentData->usedCapacity == dataMaxCapacity) {
             currentData->next->array[0] = currentData->array[dataMaxCapacity-1];
             currentData->next->usedCapacity++;
             currentData->usedCapacity--;
         }
         // Comprobar si se llego al dataNode en el que se insertara el valor
         if (currentData == refData) break;
+
         // Desplazar datos de dataNode actual
         for (int i = currentData->usedCapacity; i > 0; i--) {
             currentData->array[i] = currentData->array[i-1];
         }
         currentData = currentData->previous;
     }
+    
     // Actualizar dataNode en el que se insertara el valor
     for (int i = refData->usedCapacity; i > index; i--) {
         refData->array[i] = refData->array[i-1];
@@ -230,14 +234,14 @@ SummaryNode* ListArr::buildSummaryTree(std::vector<SummaryNode*>& vecSummaryNode
 
     // generamos el nuevo ultima raíz;
     SummaryNode* newRoot = new SummaryNode(summaryRoot, treeDeque.front());
-    treeDeque.pop_front();
+    // treeDeque.pop_front();
     
     return newRoot;
 }
 
 void ListArr::updateSummaryNodes() {
     // * Utilizamos el algoritmo del enunciado para actualizar la cantidad de datos en árbol de summaryNodes
-    int index = summaryRoot->usedCapacity;
+    int index = size();
     SummaryNode* currentSumm = summaryRoot;
     while (currentSumm->summL != nullptr) {
         currentSumm->usedCapacity++; // Actualizar cantidad de datos en summaryNode actual

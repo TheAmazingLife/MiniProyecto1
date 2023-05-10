@@ -15,14 +15,15 @@ using std::cout;
  */
 
 int main() {
-    int maxCapacity = 2;
+    int maxCapacity = 1;
 
     cout << "Creando lista con capacidad maxima de " << maxCapacity << " elementos por nodo de datos..." << '\n';
     ListArr myList(maxCapacity);
 
     cout << "* Insertando valores en la lista..." << '\n';
 
-    for (int i = 0; i < (maxCapacity*16)+1; i++) {
+    // for (int i = 0; i < (maxCapacity*32)+1; i++) {
+    for (int i = 0; i < 1000; i++) {
         // myList.insert(i+1, i);
 
         myList.insert_left(i+1);

@@ -14,21 +14,21 @@ using std::cout;
 //? Para compilar y ejecutar el programa:
 //? "g++ mainExperimental.cpp source/*.cpp -o mainExperimental && ./mainExperimental"
 
+const int INITIAL_ELEMENTS = 10;
+
+const int ITERATIONS = 5;
 const int NUM_ITERATIONS = 20;
-const int SIZES[] = {1, 64, 128, 512, 1024};
-const int NUM_SIZES = 5;
 
-void insert_left_comparison(const int elements) {
-    cout << "* Comparaciones de insert_left():" << '\n';
+void insert_left_comparison(const int listArr_size) {
+    cout << "* Comparaciones de insert_left() con " << listArr_size << " elementos en arreglos de ListArr:" << '\n';
 
-    for (int i = 0; i < NUM_SIZES; i++) {
-        int size = SIZES[i];
-        int n = elements * pow(10, i);
+    for (int i = 0; i < ITERATIONS; i++) {
+        int n = INITIAL_ELEMENTS * pow(10, i);
 
         double avg_list_arr = 0, avg_vector = 0, avg_list = 0;
         // Repetición del experimento
         for (int j = 0; j < NUM_ITERATIONS; j++) {
-            ListArr my_list_arr(size);
+            ListArr my_list_arr(listArr_size);
             std::vector<int> my_vector;
             std::list<int> my_list;
 
@@ -65,32 +65,31 @@ void insert_left_comparison(const int elements) {
         avg_list /= NUM_ITERATIONS;
 
         cout << "Promedios de " << NUM_ITERATIONS << " tests de " << n << " elementos:" << '\n';
-        cout << " ListArr: " << (int)avg_list_arr << " us" << '\n';
-        cout << " Vector:  " << (int)avg_vector << " us" << '\n';
-        cout << " List:    " << (int)avg_list << " us" << '\n';
+        cout << " ListArr: " << (int)avg_list_arr << " us, ";
+        cout << "Vector: " << (int)avg_vector << " us, ";
+        cout << "List: " << (int)avg_list << " us" << '\n';
     }
     cout << '\n';
 }
 
 
-void insert_right_comparison(const int elements) {
-    cout << "* Comparacines de insert_right():" << '\n';
+void insert_right_comparison(const int listArr_size) {
+    cout << "* Comparaciones de insert_right() con " << listArr_size << " elementos en arreglos de ListArr:" << '\n';
 
-    for (int i = 0; i < NUM_SIZES; i++) {
-        int size = SIZES[i];
-        int n = elements * pow(10, i);
+    for (int i = 0; i < ITERATIONS; i++) {
+        int n = INITIAL_ELEMENTS * pow(10, i);
 
-        int avg_list_arr = 0, avg_vector = 0, avg_list = 0;
+        double avg_list_arr = 0, avg_vector = 0, avg_list = 0;
         // Repetición del experimento
         for (int j = 0; j < NUM_ITERATIONS; j++) {
-            ListArr my_list_arr(size);
+            ListArr my_list_arr(listArr_size);
             std::vector<int> my_vector;
             std::list<int> my_list;
 
             // * ListArr
             auto start = std::chrono::high_resolution_clock::now();
             for (int k = 0; k < n; k++) {
-                my_list_arr.insert_left(rand() % n);
+                my_list_arr.insert_right(rand() % n);
             }
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
@@ -120,26 +119,25 @@ void insert_right_comparison(const int elements) {
         avg_list /= NUM_ITERATIONS;
 
         cout << "Promedios de " << NUM_ITERATIONS << " tests de " << n << " elementos:" << '\n';
-        cout << " ListArr: " << (int)avg_list_arr << " us" << '\n';
-        cout << " Vector:  " << (int)avg_vector << " us" << '\n';
-        cout << " List:    " << (int)avg_list << " us" << '\n';
+        cout << " ListArr: " << (int)avg_list_arr << " us, ";
+        cout << "Vector: " << (int)avg_vector << " us, ";
+        cout << "List: " << (int)avg_list << " us" << '\n';
     }
     cout << '\n';
 }
 
-void find_comparison(const int elements) {
-    cout << "* Comparaciones de find():" << '\n';
+void find_comparison(const int listArr_size) {
+    cout << "* Comparaciones de find_comparison() con " << listArr_size << " elementos en arreglos de ListArr:" << '\n';
     int nFindTest = NUM_ITERATIONS * 5;
 
-    for (int i = 0; i < NUM_SIZES; i++) {
-        int size = SIZES[i];
-        int n = elements * pow(10, i);
+    for (int i = 0; i < ITERATIONS; i++) {
+        int n = INITIAL_ELEMENTS * pow(10, i);
 
         int avg_list_arr = 0, avg_vector = 0, avg_list = 0;
         bool found_list_arr, found_vector, found_list;
         // Repetición del experimento
-        for (int j = 0; j < nFindTest; j++) {
-            ListArr my_list_arr(size);
+        for (int j = 0; j < NUM_ITERATIONS; j++) {
+            ListArr my_list_arr(listArr_size);
             std::vector<int> my_vector;
             std::list<int> my_list;
 
@@ -205,30 +203,33 @@ void find_comparison(const int elements) {
             }
         }
 
-        avg_list_arr /= nFindTest;
-        avg_vector /= nFindTest;
-        avg_list /= nFindTest;
+        avg_list_arr /= NUM_ITERATIONS;
+        avg_vector /= NUM_ITERATIONS;
+        avg_list /= NUM_ITERATIONS;
 
-        cout << "Promedios de " << nFindTest << " tests de " << n << " elementos:" << '\n';
-        cout << " ListArr: " << (int)avg_list_arr << " us" << '\n';
-        cout << " Vector:  " << (int)avg_vector << " us" << '\n';
-        cout << " List:    " << (int)avg_list << " us" << '\n';
+        cout << "Promedios de " << NUM_ITERATIONS << " tests de " << n << " elementos:" << '\n';
+        cout << " ListArr: " << (int)avg_list_arr << " us, ";
+        cout << "Vector: " << (int)avg_vector << " us, ";
+        cout << "List: " << (int)avg_list << " us" << '\n';
     }
+    cout << '\n';
 }
 
 int main() {
     srand(time(nullptr));
 
-    int initialElements = 10;
+    int sizes[] = {1, 64, 128, 512, 1024};
 
-    // * Comparación de insert_left()
-    insert_left_comparison(initialElements);
+    for (int i = 0; i < 5; i++) {
+        // * Comparación de insert_left()
+        insert_left_comparison(sizes[i]);
 
-    // * Comparación de insert_right()
-    insert_right_comparison(initialElements);
+        // * Comparación de insert_right()
+        insert_right_comparison(sizes[i]);
 
-    // * Comparación de find()
-    find_comparison(initialElements);
+        // * Comparación de find()
+        find_comparison(sizes[i]);
+    }
 
     return 0;
 }
